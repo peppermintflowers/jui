@@ -1,1 +1,1 @@
-This folder contains the configuration and service that enable the application to fetch and persist data to MongoDB.
+This folder contains the configuration and service that enable the application to fetch data from, and persist data to MongoDB.
