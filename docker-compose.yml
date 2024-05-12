@@ -2,9 +2,8 @@ version: '3.8'
 services: 
   mongo:
     image: mongo:latest
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: samiam
-      MONGO_INITDB_ROOT_PASSWORD: idonotlike
+    env_file:
+    - ./mongoDB/.env
     ports:
       - 27017:27017
     volumes:
