@@ -16,11 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 @RestController
 @RequestMapping("api/v1/auth")
 public class UserController {
-    @Value("${app.controller.exception.message3}")
-    private String invalidMessage;
-
-    @Value("${app.controller.exception.message1}")
-    private String missingMessage;
 
     private UserService userService;
     private TokenHandler jwtGenerator;

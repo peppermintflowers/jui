@@ -1,13 +1,23 @@
 version: '3.8'
-services: 
+services:
   mongo:
     image: mongo:latest
     env_file:
-    - ./mongoDB/.env
+      - ./mongoDB/.env
     ports:
       - 27017:27017
     volumes:
       - prod_data:/data/db
+  user_management:
+    depends_on:
+      - mongo
+    build: ./user_management
+    environment:
+      SPRING_APPLICATION_JSON: '{
+              "spring.data.mongodb.uri" : "mongodb://${MONGO_DB_USERNAME}:${MONGO_DB_PASSWORD}mongo:27017/${MONGO_DB_NAME}?authSource=admin"
+            }'
+    ports:
+      - 8080:8080
 volumes:
   prod_data:
     driver: local
