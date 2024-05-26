@@ -20,6 +20,22 @@ public class SecurityConfig {
     private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    private static final String[] AUTH_WHITELIST = {
+            // for Swagger UI v2
+            "/v2/api-docs",
+            "/swagger-ui.html",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/webjars/**",
+            // for Swagger UI v3 (OpenAPI)
+            "/v3/api-docs/**",
+            "/v3/api-docs/",
+            "/swagger-ui/**",
+            "api/v1/auth/**"
+    };
+
     public SecurityConfig(
             JwtAuthenticationFilter jwtAuthenticationFilter,
             AuthenticationProvider authenticationProvider
@@ -33,8 +49,7 @@ public class SecurityConfig {
         http.csrf()
                 .disable()
                 .authorizeHttpRequests()
-                .requestMatchers("api/v1/auth/**")
-                .permitAll()
+                .requestMatchers(AUTH_WHITELIST).permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()

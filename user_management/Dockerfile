@@ -1,9 +1,5 @@
-FROM maven:3.6.3-openjdk-17 AS build
-COPY pom.xml .
-RUN mvn dependency:go-offline
-COPY . .
-RUN mvn clean package
-FROM openjdk:17
-COPY --from=build target/user_management-0.0.1-SNAPSHOT.jar .
+FROM eclipse-temurin:21_35-jdk-alpine
+ARG JAR_FILE=target/*.jar
+COPY ./target/user_management-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8080
-CMD ["java", "-jar", "user_management-0.0.1-SNAPSHOT.jar"]
+CMD ["java", "-jar", "app.jar"]
