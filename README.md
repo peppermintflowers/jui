@@ -15,6 +15,13 @@ To start a local MongoDB instance using Docker Compose, run:
 docker compose up mongo
 ```
 
+## Local Redis
+To start a local Redis instance using Docker Compose, run:
+
+```
+docker compose up redis
+```
+
 ## User Management Service
 
 ### Building the App
@@ -50,4 +57,4 @@ To build and run the `user_management` service using Docker Compose from the roo
 
 ```
 docker compose build user_management && docker compose up user_management
-``
+```

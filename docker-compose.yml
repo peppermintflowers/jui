@@ -8,6 +8,19 @@ services:
       - 27017:27017
     volumes:
       - prod_data:/data/db
+
+  redis:
+    environment:
+      SENTINEL: 'false'
+      STANDALONE: 'false'
+    build:
+      context: ./redis
+      args:
+        redis_version: '7.0.10'
+    hostname: server
+    ports:
+      - '7000-7050:7000-7050'
+
   user_management:
     depends_on:
       - mongo
