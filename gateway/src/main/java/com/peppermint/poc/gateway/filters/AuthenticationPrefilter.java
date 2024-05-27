@@ -2,6 +2,7 @@ package com.peppermint.poc.gateway.filters;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.core.io.buffer.DataBufferFactory;
@@ -15,6 +16,7 @@ import org.springframework.web.server.ServerWebExchange;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.peppermint.poc.gateway.model.ConnValidationResponse;
+import com.peppermint.poc.gateway.model.ExceptionResponseModel;
 
 import reactor.core.publisher.Mono;
 
@@ -22,10 +24,11 @@ import reactor.core.publisher.Mono;
 public class AuthenticationPrefilter extends AbstractGatewayFilterFactory<AuthenticationPrefilter.Config> {
 
     private final WebClient.Builder webClientBuilder;
-
-    public AuthenticationPrefilter(WebClient.Builder webClientBuilder) {
+    private ObjectMapper objectMapper;
+    public AuthenticationPrefilter(WebClient.Builder webClientBuilder, ObjectMapper objectMapper) {
         super(Config.class);
         this.webClientBuilder=webClientBuilder;
+        this.objectMapper = objectMapper;
     }
 
     public static class Config {
@@ -33,26 +36,26 @@ public class AuthenticationPrefilter extends AbstractGatewayFilterFactory<Authen
 
     }
 
+    //hits validateToken and sets into request, else returns error
     @Override
     public GatewayFilter apply(Config config) {
         return(exchange, chain)->{
             ServerHttpRequest request = exchange.getRequest();
-            String bearerToken = request.getHeaders().getFirst("Authentication");
+            String bearerToken = request.getHeaders().getFirst("Authorization");
                 return webClientBuilder.build().get()
                         .uri("lb://user_management/api/v1/validateToken")
-                        .header("Authentication", bearerToken)
+                        .header("Authorization", bearerToken)
                         .retrieve().bodyToMono(ConnValidationResponse.class)
                         .map(response -> {
                             exchange.getRequest().mutate().header("username", response.getUsername());
                             exchange.getRequest().mutate().header("auth-token", response.getToken());
-
                             return exchange;
                         }).flatMap(chain::filter).onErrorResume(error -> {
                             HttpStatus errorCode = null;
                             String errorMsg = "";
                             if (error instanceof WebClientResponseException) {
                                 WebClientResponseException webCLientException = (WebClientResponseException) error;
-                                errorCode = webCLientException.getStatusCode();
+                                errorCode = (HttpStatus) webCLientException.getStatusCode();
                                 errorMsg = webCLientException.getStatusText();
 
                             } else {
@@ -72,7 +75,7 @@ public class AuthenticationPrefilter extends AbstractGatewayFilterFactory<Authen
         response.setStatusCode(httpStatus);
         try {
             response.getHeaders().add("Content-Type", "application/json");
-            ExceptionResponseModel data = new ExceptionResponseModel(errCode, err, errDetails, null, new Date());
+            ExceptionResponseModel data = new ExceptionResponseModel(errCode, err, errDetails, new Date());
             byte[] byteData = objectMapper.writeValueAsBytes(data);
             return response.writeWith(Mono.just(byteData).map(t -> dataBufferFactory.wrap(t)));
 

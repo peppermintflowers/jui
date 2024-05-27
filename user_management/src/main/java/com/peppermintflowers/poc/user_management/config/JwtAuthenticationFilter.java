@@ -4,6 +4,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -19,15 +20,11 @@ import com.peppermintflowers.poc.user_management.service.TokenHandler;
 import java.io.IOException;
 
 @Component
+@RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter{
     private final HandlerExceptionResolver handlerExceptionResolver;
     private final TokenHandler tokenGenerator;
     private final UserDetailsService userDetailsService;
-public JwtAuthenticationFilter(HandlerExceptionResolver handlerExceptionResolver, TokenHandler tokenGenerator, UserDetailsService userDetailsService){
-    this.handlerExceptionResolver = handlerExceptionResolver;
-    this.tokenGenerator = tokenGenerator;
-    this.userDetailsService = userDetailsService;
-}
     @Override
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,

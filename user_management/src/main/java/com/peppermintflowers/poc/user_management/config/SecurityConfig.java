@@ -1,5 +1,6 @@
 package com.peppermintflowers.poc.user_management.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
     private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -37,16 +39,6 @@ public class SecurityConfig {
             "api/v1/auth/**",
             "api/v1/dashboard/products"
     };
-
-    public SecurityConfig(
-            JwtAuthenticationFilter jwtAuthenticationFilter,
-            AuthenticationProvider authenticationProvider,
-            JwtGenerationFilter jwtGenerationFilter
-    ) {
-        this.authenticationProvider = authenticationProvider;
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-        this.jwtGenerationFilter = jwtGenerationFilter;
-    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
