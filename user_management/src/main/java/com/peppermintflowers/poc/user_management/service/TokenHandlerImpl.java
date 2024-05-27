@@ -80,7 +80,7 @@ public class TokenHandlerImpl implements TokenHandler {
     }
 
     private Key getSignInKey() {
-    byte[] keyBytes = Decoders.BASE64.decode(secret);
-    return Keys.hmacShaKeyFor(keyBytes);
-}
+        byte[] keyBytes = Decoders.BASE64.decode(secret);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
 }

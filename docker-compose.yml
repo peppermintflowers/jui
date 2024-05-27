@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   mongo:
-    image: mongo:8.0.0-rc4-jammy
+    image: mongo:latest
     env_file:
       - ./mongoDB/.env
     ports:
@@ -33,7 +33,15 @@ services:
       - MONGO_HOST=mongo
       - SPRING_DATA_MONGODB_URI=mongodb://${MONGO_DB_USERNAME}:${MONGO_DB_PASSWORD}@mongo:27017/${MONGO_DB_NAME}?authSource=admin
     ports:
-      - 8080:8080
+      - 9004:9004
+  dashboard:
+    build: ./dashboard
+    ports:
+      - 9297:9297
+  eureka_server:
+    build: ./eureka_server
+    ports:
+      - 8761:8761
 volumes:
   prod_data:
     driver: local

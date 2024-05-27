@@ -59,6 +59,7 @@ public JwtAuthenticationFilter(HandlerExceptionResolver handlerExceptionResolver
 
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
+                    request.setAttribute("username", username);
                 }
             }
 

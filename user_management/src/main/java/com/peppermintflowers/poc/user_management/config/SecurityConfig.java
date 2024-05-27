@@ -19,6 +19,7 @@ import java.util.List;
 public class SecurityConfig {
     private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtGenerationFilter jwtGenerationFilter;
 
     private static final String[] AUTH_WHITELIST = {
             // for Swagger UI v2
@@ -33,15 +34,18 @@ public class SecurityConfig {
             "/v3/api-docs/**",
             "/v3/api-docs/",
             "/swagger-ui/**",
-            "api/v1/auth/**"
+            "api/v1/auth/**",
+            "api/v1/dashboard/products"
     };
 
     public SecurityConfig(
             JwtAuthenticationFilter jwtAuthenticationFilter,
-            AuthenticationProvider authenticationProvider
+            AuthenticationProvider authenticationProvider,
+            JwtGenerationFilter jwtGenerationFilter
     ) {
         this.authenticationProvider = authenticationProvider;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.jwtGenerationFilter = jwtGenerationFilter;
     }
 
     @Bean
@@ -57,7 +61,8 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilter(jwtGenerationFilter)
+                .addFilterBefore(jwtAuthenticationFilter, JwtGenerationFilter.class );
 
         return http.build();
     }
@@ -66,7 +71,7 @@ public class SecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(List.of("http://localhost:8005"));
+        configuration.setAllowedOrigins(List.of("http://localhost:9004"));
         configuration.setAllowedMethods(List.of("GET","POST"));
         configuration.setAllowedHeaders(List.of("Authorization","Content-Type"));
 
