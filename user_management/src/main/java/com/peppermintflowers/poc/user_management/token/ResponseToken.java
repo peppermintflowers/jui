@@ -1,25 +1,15 @@
 package com.peppermintflowers.poc.user_management.token;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
 public class ResponseToken {
-    private String jwt;
-
+    private String status;
+    private boolean isAuthenticated;
+    private String methodType;
+    private String username;
+    private String token;
     private long expiresIn;
-
-    public String getToken() {
-        return jwt;
-    }
-
-    public ResponseToken setToken(String jwt) {
-        this.jwt = jwt;
-        return this;
-    }
-
-    public long getExpiresIn() {
-        return expiresIn;
-    }
-
-    public ResponseToken setExpiresIn(long expiresIn) {
-        this.expiresIn = expiresIn;
-        return this;
-    }
 }

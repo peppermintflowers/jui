@@ -1,7 +1,6 @@
-version: '3.8'
 services:
   mongo:
-    image: mongo:latest
+    image: mongo:8.0.0-rc4-jammy
     env_file:
       - ./mongoDB/.env
     ports:
@@ -38,10 +37,6 @@ services:
     build: ./dashboard
     ports:
       - 9297:9297
-  eureka_server:
-    build: ./eureka_server
-    ports:
-      - 8761:8761
 volumes:
   prod_data:
     driver: local

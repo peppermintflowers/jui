@@ -9,4 +9,5 @@ public class ConnValidationResponse {
     private String methodType;
     private String username;
     private String token;
+    private long expiresIn;
 }

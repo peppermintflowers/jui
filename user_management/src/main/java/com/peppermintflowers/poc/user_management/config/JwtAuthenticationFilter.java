@@ -14,7 +14,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.servlet.HandlerExceptionResolver;
 import com.peppermintflowers.poc.user_management.service.TokenHandler;
 
 import java.io.IOException;
@@ -22,7 +21,6 @@ import java.io.IOException;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter{
-    private final HandlerExceptionResolver handlerExceptionResolver;
     private final TokenHandler tokenGenerator;
     private final UserDetailsService userDetailsService;
     @Override
@@ -57,12 +55,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                     request.setAttribute("username", username);
+                    request.setAttribute("jwt", jwt);
                 }
             }
 
             filterChain.doFilter(request, response);
         } catch (Exception exception) {
-            handlerExceptionResolver.resolveException(request, response, null, exception);
+            exception.printStackTrace();
+            //handlerExceptionResolver.resolveException(request, response, null, exception);
         }
     }
 }

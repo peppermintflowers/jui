@@ -1,4 +1,10 @@
 package com.peppermintflowers.poc.user_management.config;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Component;
 
@@ -29,17 +35,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
 @Component
+@RequiredArgsConstructor
+@Import(ApplicationConfig.class)
 public class JwtGenerationFilter extends UsernamePasswordAuthenticationFilter {
-    private AuthenticationManager authenticationManager;
     private ObjectMapper mapper=new ObjectMapper();
-    private TokenHandler tokenGenerator;
+    private final TokenHandler tokenGenerator;
+    private final AuthenticationManager authenticationManager;
     @Value("${spring.security.jwt.expiration}")
     private long expiryTime;
-
-    public JwtGenerationFilter(AuthenticationManager authenticationManager, TokenHandler tokenGenerator){
-        this.authenticationManager = authenticationManager;
-        this.tokenGenerator = tokenGenerator;
-    }
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -57,7 +60,9 @@ public class JwtGenerationFilter extends UsernamePasswordAuthenticationFilter {
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         User requestUser = mapper.readValue(request.getInputStream(), User.class);
         String jwt = tokenGenerator.generateToken(requestUser);
-        ResponseToken token = new ResponseToken().setToken(jwt).setExpiresIn(tokenGenerator.getExpiryTime());
+        ResponseToken token = new ResponseToken();
+        token.setToken(jwt);
+        token.setExpiresIn(tokenGenerator.getExpiryTime());
 
         response.addHeader("Header", String.format("Bearer %s", jwt));
         response.addHeader("Expiration", String.valueOf(expiryTime));
