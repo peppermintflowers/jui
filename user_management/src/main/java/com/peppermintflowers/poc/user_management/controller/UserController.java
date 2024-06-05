@@ -5,19 +5,15 @@ import com.peppermintflowers.poc.user_management.service.UserService;
 import com.peppermintflowers.poc.user_management.service.TokenHandler;
 import com.peppermintflowers.poc.user_management.token.ResponseToken;
 
-import jakarta.servlet.http.HttpServletRequest;
-
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("api/v1/auth")
@@ -34,12 +30,10 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<?> postUser(@RequestBody User user){
-        try{
-            userService.saveUser(user);
-            return new ResponseEntity<>(user, HttpStatus.CREATED);
-        } catch (Exception e){
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
-        }
+
+           Optional<User> optionalUser =userService.registerUser(user);
+        return optionalUser.<ResponseEntity<?>>map(value -> new ResponseEntity<>(value, HttpStatus.CREATED)).orElseGet(() -> new ResponseEntity<>("Unable to create user", HttpStatus.CONFLICT));
+
     }
 
     @PostMapping("/login")
