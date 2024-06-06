@@ -18,6 +18,7 @@ import com.peppermint.poc.gateway.filters.AuthenticationPrefilter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
+import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
 public class DefaultConfig {
@@ -49,25 +50,34 @@ public class DefaultConfig {
         return objectMapper;
     }
 
+    @Bean
+    public WebClient.Builder webClient() {
+        return WebClient.builder();
+    }
+
 
     //this will check path, validate and add token to request and redirect it
-    @Bean
+    /*@Bean
     public RouteLocator routes(
             RouteLocatorBuilder builder,
             AuthenticationPrefilter authFilter) {
         return builder.routes()
-                .route("user_management-route", r -> r.path("/user_management/**")
+                .route("user_management_route", r -> r.path("/user_management/**")
                         .filters(f ->
                                 f.rewritePath("/user_management(?<segment>/?.*)", "$\\{segment}")
                                         .filter(authFilter.apply(
                                                 new AuthenticationPrefilter.Config())))
-                        .uri("lb://user_management"))
-                .route("dashboard-route", r -> r.path("/dashboard/**")
+                        .uri("http://localhost/9004"))
+                .route("dashboard_route", r -> r.path("/dashboard/**")
                         .filters(f ->
                                 f.rewritePath("/dashboard(?<segment>/?.*)", "$\\{segment}")
                                         .filter(authFilter.apply(
                                                 new AuthenticationPrefilter.Config())))
-                        .uri("lb://dashboard"))
+                        .uri("http://localhost/9297"))
                 .build();
+    }*/
+    @Bean
+    public RouteLocator routeMap( RouteLocatorBuilder builder){
+        return builder.routes().route("authentication_route", r -> r.path("/api/v1/auth/**").uri("http://localhost:9004")).route("dashboard_route", r -> r.path("/api/v1/dashboard/**").uri("http://localhost:9297")).build();
     }
 }

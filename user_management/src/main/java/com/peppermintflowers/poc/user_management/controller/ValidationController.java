@@ -26,7 +26,7 @@ public class ValidationController {
 
      @PostMapping(value = "", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ResponseToken> validatePost(HttpServletRequest request) {
-        String jwt = (String) request.getAttribute("jwt");
+        String jwt = (String) request.getAttribute("token");
         ResponseToken token = new ResponseToken();
         token.setToken(jwt);
         token.setExpiresIn(jwtGenerator.getExpiryTime());
@@ -35,7 +35,7 @@ public class ValidationController {
 
     @GetMapping(value = "", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<ResponseToken> validateGet(HttpServletRequest request) {
-        String jwt = (String) request.getAttribute("jwt");
+        String jwt = (String) request.getAttribute("token");
         ResponseToken token = new ResponseToken();
         token.setToken(jwt);
         token.setExpiresIn(jwtGenerator.getExpiryTime());

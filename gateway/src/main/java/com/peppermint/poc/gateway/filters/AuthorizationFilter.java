@@ -1,6 +1,9 @@
 package com.peppermint.poc.gateway.filters;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+public class AuthorizationFilter{
+
+}
+/*import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.peppermint.poc.gateway.model.ExceptionResponseModel;
 import io.jsonwebtoken.*;
@@ -83,4 +86,4 @@ public class AuthorizationFilter implements GlobalFilter {
         }
         return false;
     }
-}
+}*/

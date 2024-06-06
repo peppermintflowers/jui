@@ -1,6 +1,10 @@
 package com.peppermint.poc.gateway.filters;
 
-import java.util.Date;
+public class AuthenticationPrefilter{
+
+}
+
+/*import java.util.Date;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -15,7 +19,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import org.springframework.web.server.ServerWebExchange;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.peppermint.poc.gateway.model.ConnValidationResponse;
+import com.peppermint.poc.gateway.model.ResponseToken;
 import com.peppermint.poc.gateway.model.ExceptionResponseModel;
 
 import reactor.core.publisher.Mono;
@@ -43,12 +47,12 @@ public class AuthenticationPrefilter extends AbstractGatewayFilterFactory<Authen
             ServerHttpRequest request = exchange.getRequest();
             String bearerToken = request.getHeaders().getFirst("Authorization");
                 return webClientBuilder.build().get()
-                        .uri("lb://user_management/api/v1/validateToken")
+                        .uri("user_management/api/v1/validateToken")
                         .header("Authorization", bearerToken)
-                        .retrieve().bodyToMono(ConnValidationResponse.class)
+                        .retrieve().bodyToMono(ResponseToken.class)
                         .map(response -> {
                             exchange.getRequest().mutate().header("username", response.getUsername());
-                            exchange.getRequest().mutate().header("auth-token", response.getToken());
+                            exchange.getRequest().mutate().header("token", response.getToken());
                             return exchange;
                         }).flatMap(chain::filter).onErrorResume(error -> {
                             HttpStatus errorCode = null;
@@ -86,4 +90,4 @@ public class AuthenticationPrefilter extends AbstractGatewayFilterFactory<Authen
         return response.setComplete();
     }
 
-}
+}*/
