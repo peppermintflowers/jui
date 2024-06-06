@@ -77,7 +77,7 @@ public class DefaultConfig {
                 .build();
     }*/
     @Bean
-    public RouteLocator routeMap( RouteLocatorBuilder builder){
-        return builder.routes().route("authentication_route", r -> r.path("/api/v1/auth/**").uri("http://localhost:9004")).route("dashboard_route", r -> r.path("/api/v1/dashboard/**").uri("http://localhost:9297")).build();
+    public RouteLocator routeMap( RouteLocatorBuilder builder, AuthenticationPrefilter authFilter){
+        return builder.routes().route("authentication_route", r -> r.path("/api/v1/auth/**").filters(f -> f.filter(authFilter.apply(new AuthenticationPrefilter.Config()))).uri("http://localhost:9004")).route("user_management_route", r -> r.path("/api/v1/user/**").filters(f -> f.filter(authFilter.apply(new AuthenticationPrefilter.Config()))).uri("http://localhost:9004")).route("dashboard_route", r -> r.path("/api/v1/dashboard/**").filters(f -> f.filter(authFilter.apply(new AuthenticationPrefilter.Config()))).uri("http://localhost:9297")).build();
     }
 }

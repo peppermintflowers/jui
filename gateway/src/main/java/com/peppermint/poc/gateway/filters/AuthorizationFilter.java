@@ -1,12 +1,10 @@
 package com.peppermint.poc.gateway.filters;
 
-public class AuthorizationFilter{
-
-}
-/*import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.peppermint.poc.gateway.model.ExceptionResponseModel;
 import io.jsonwebtoken.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.function.Predicate;
 
+@Slf4j
 public class AuthorizationFilter implements GlobalFilter {
 
     @Autowired
@@ -35,6 +34,7 @@ public class AuthorizationFilter implements GlobalFilter {
     //pass request ahead in filter chain if whitelisted or has access
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        log.info("In AuthorizationFilter");
         ServerHttpRequest req = exchange.getRequest();
         if(isSecured.test(req)) {
             try {
@@ -48,6 +48,7 @@ public class AuthorizationFilter implements GlobalFilter {
                 return this.onError(exchange, "Authorization header is invalid", HttpStatus.UNAUTHORIZED);
             }
         }
+        log.info("Don't worry this request is whitelisted.");
         return chain.filter(exchange);
     }
 
@@ -86,4 +87,4 @@ public class AuthorizationFilter implements GlobalFilter {
         }
         return false;
     }
-}*/
+}

@@ -17,4 +17,10 @@ public class UserAccountController {
             User currentUser = (User) authentication.getPrincipal();
             return ResponseEntity.ok(currentUser);
         }
+
+        @GetMapping("/message")
+        public ResponseEntity<String> seeMessage(){
+            String message = "You are logged in";
+            return ResponseEntity.ok(message);
+        }
 }

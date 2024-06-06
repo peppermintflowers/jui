@@ -1,5 +1,6 @@
 package com.peppermintflowers.poc.user_management.config;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -36,6 +37,7 @@ import org.springframework.http.MediaType;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 @Import(ApplicationConfig.class)
 public class JwtGenerationFilter extends UsernamePasswordAuthenticationFilter {
     private ObjectMapper mapper=new ObjectMapper();
@@ -47,6 +49,7 @@ public class JwtGenerationFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         try {
+            log.info("A whitelisted request should not be attempted to authenticate");
             User requestUser = mapper.readValue(request.getInputStream(), User.class);
             Authentication authToken = new UsernamePasswordAuthenticationToken(requestUser.getUsername(), requestUser.getPassword());
             return authenticationManager.authenticate(authToken);
@@ -58,13 +61,14 @@ public class JwtGenerationFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
+        log.info("And what do we do upon successful authentication?");
         User requestUser = mapper.readValue(request.getInputStream(), User.class);
         String jwt = tokenGenerator.generateToken(requestUser);
         ResponseToken token = new ResponseToken();
         token.setToken(jwt);
         token.setExpiresIn(tokenGenerator.getExpiryTime());
 
-        response.addHeader("Header", String.format("Bearer %s", jwt));
+        response.addHeader("Authorization", String.format("Bearer %s", jwt));
         response.addHeader("Expiration", String.valueOf(expiryTime));
 
         response.addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);

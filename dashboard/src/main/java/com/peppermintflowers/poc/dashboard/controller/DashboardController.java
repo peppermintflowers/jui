@@ -15,4 +15,10 @@ public class DashboardController {
 
             return ResponseEntity.ok(welcome);
         }
+
+        @GetMapping("/cart")
+        public ResponseEntity<String> cart(){
+            String cart = "This is a logged in user's cart";
+            return ResponseEntity.ok(cart);
+        }
 }
