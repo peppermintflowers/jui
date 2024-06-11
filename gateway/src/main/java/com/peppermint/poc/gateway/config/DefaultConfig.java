@@ -57,25 +57,6 @@ public class DefaultConfig {
 
 
     //this will check path, validate and add token to request and redirect it
-    /*@Bean
-    public RouteLocator routes(
-            RouteLocatorBuilder builder,
-            AuthenticationPrefilter authFilter) {
-        return builder.routes()
-                .route("user_management_route", r -> r.path("/user_management/**")
-                        .filters(f ->
-                                f.rewritePath("/user_management(?<segment>/?.*)", "$\\{segment}")
-                                        .filter(authFilter.apply(
-                                                new AuthenticationPrefilter.Config())))
-                        .uri("http://localhost/9004"))
-                .route("dashboard_route", r -> r.path("/dashboard/**")
-                        .filters(f ->
-                                f.rewritePath("/dashboard(?<segment>/?.*)", "$\\{segment}")
-                                        .filter(authFilter.apply(
-                                                new AuthenticationPrefilter.Config())))
-                        .uri("http://localhost/9297"))
-                .build();
-    }*/
     @Bean
     public RouteLocator routeMap( RouteLocatorBuilder builder, AuthenticationPrefilter authFilter){
         return builder.routes().route("authentication_route", r -> r.path("/api/v1/auth/**").filters(f -> f.filter(authFilter.apply(new AuthenticationPrefilter.Config()))).uri("http://localhost:9004")).route("user_management_route", r -> r.path("/api/v1/user/**").filters(f -> f.filter(authFilter.apply(new AuthenticationPrefilter.Config()))).uri("http://localhost:9004")).route("dashboard_route", r -> r.path("/api/v1/dashboard/**").filters(f -> f.filter(authFilter.apply(new AuthenticationPrefilter.Config()))).uri("http://localhost:9297")).build();

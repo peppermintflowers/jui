@@ -16,7 +16,7 @@ myclient = MongoClient("mongodb://localhost:"+port+"/",username=username,passwor
 # database 
 db = myclient["jui_db"]
 
-Collection = db["product-catalogue"]
+Collection = db["product_catalogue"]
  
 # Loading or Opening the json file
 with open('sd.json') as file:
