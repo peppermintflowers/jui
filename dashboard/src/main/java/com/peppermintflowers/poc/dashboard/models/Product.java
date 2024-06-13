@@ -16,8 +16,6 @@ public class Product {
     Long id;
     @Field("price")
     Long price;
-    @Field("discountedPrice:")
-    Long discountedPrice;
     @Field("styleType")
     String styleType;
     @Field("articleNumber")

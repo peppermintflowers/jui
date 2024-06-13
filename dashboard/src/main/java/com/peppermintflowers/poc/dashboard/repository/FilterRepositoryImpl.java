@@ -18,8 +18,8 @@ public class FilterRepositoryImpl implements FilterRepository {
     public List<Product> findByProductFilters(ProductFilters productFilters) {
         List<Criteria> criterias = new ArrayList<Criteria>();
         Query query = new Query();
-        if(productFilters.getDiscountedPrice() != null){
-            criterias.add(Criteria.where("discountedPrice").lte(productFilters.getDiscountedPrice()));
+        if(productFilters.getPrice() != null){
+            criterias.add(Criteria.where("price").lte(productFilters.getPrice()));
         }
         if(productFilters.getProductDisplayName() != null){
             criterias.add(Criteria.where("productDisplayName").is(productFilters.getProductDisplayName()));

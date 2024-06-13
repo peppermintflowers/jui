@@ -1,30 +1,34 @@
 package com.peppermintflowers.poc.dashboard.service;
 
+import com.peppermintflowers.poc.dashboard.models.Cart;
+import com.peppermintflowers.poc.dashboard.models.CartObject;
 import com.peppermintflowers.poc.dashboard.models.Product;
 import com.peppermintflowers.poc.dashboard.models.ProductFilters;
+import com.peppermintflowers.poc.dashboard.repository.CartRepository;
 import com.peppermintflowers.poc.dashboard.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class DashboardServiceImpl implements DashboardService{
+
     private final ProductRepository productRepository;
-    @Override
-    public List<Product> getAllProducts() {
-    List<Product> products = productRepository.findAll();
-        return products;
-    }
+    private final CartRepository cartRepository;
+    //private final UserRepository userRepository;
 
     @Override
     public List<Product> getAllProducts(ProductFilters productFilters) {
-        List<Product> products;
-        products  = productRepository.findByProductFilters(productFilters);
-        return products;
+        if(productFilters.isEmpty())
+        {log.info("In the correct step");
+            return productRepository.findAll();
+        }
+        return productRepository.findByProductFilters(productFilters);
     }
 
     @Override
@@ -32,4 +36,71 @@ public class DashboardServiceImpl implements DashboardService{
         Optional<Product> product = productRepository.findProductById(productId);
         return product.orElseThrow();
     }
+
+    @Override
+    public Cart getCart(String username) {
+        //Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        //User currentUser = (User) authentication.getPrincipal();
+        //Optional<User> currentUser = userRepository.findUserByUsername(username);
+        //String userId = currentUser.get().getId();
+            Cart cart = cartRepository.getCartByUsername(username);
+            if(cart == null){
+                cart = new Cart(username);
+                cartRepository.save(cart);
+            }
+            return cart;
+        }
+
+    @Override
+    public Cart updateCart(String username, Long productId, Long skuId, int quantity, Product product) {
+        Cart userCart = getCart(username);
+        log.info("Cart fetched");
+        List<CartObject> cartObjects = userCart.getCartObjects();
+        CartObject updatedItem = null;
+        if(!cartObjects.isEmpty()) {
+            log.info("Checking items");
+            for (CartObject cartObject : cartObjects) {
+                log.info("productId {}",cartObject.getProductId());
+                log.info("skuId {}", cartObject.getSkuId());
+                if (cartObject.getProductId().equals(productId) && cartObject.getSkuId().equals(skuId)) {
+                    log.info("Object found");
+                    updatedItem = cartObject;
+                }
+            }
+        }
+        if(updatedItem == null){
+            log.info("cart object is not already present");
+            if(quantity>0){
+                log.info("cart object needs to be added");
+                CartObject cartObject = new CartObject(productId, skuId, quantity, product.getPrice(), product.getDefaultImageUrl());
+                userCart.addToCart(cartObject);
+            }
+            else{
+                return null;
+            }
+        }
+        else{
+            if(quantity == 0){
+                userCart.removeFromCart(updatedItem);
+            }
+            else{
+                updatedItem.setQuantity(quantity);
+            }
+
+        }
+        persistUpdatedCart(userCart);
+        log.info("Cart persisted");
+        return userCart;
+    }
+
+    @Override
+    public void persistUpdatedCart(Cart userCart) {
+
+        log.info("persisting cart");
+        cartRepository.save(userCart);
+    }
+
 }
+
+
+
