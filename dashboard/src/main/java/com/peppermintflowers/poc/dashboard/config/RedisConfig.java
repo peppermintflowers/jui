@@ -11,6 +11,7 @@ import io.lettuce.core.resource.DefaultClientResources;
 import io.lettuce.core.resource.Delay;
 import io.lettuce.core.resource.DirContextDnsResolver;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.data.redis.LettuceClientConfigurationBuilderCustomizer;
 import org.springframework.cache.Cache;
 import org.springframework.cache.annotation.CacheConfig;
@@ -29,6 +30,7 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
@@ -36,6 +38,9 @@ import java.util.concurrent.TimeUnit;
 public class RedisConfig implements CachingConfigurer {
     private String connectTimeout = "3000";
     private String commandTimeout = "3500";
+
+    @Value("${redis.host}")
+    private List<String> host;
     @Bean
     public DefaultClientResources defaultClientResources(){
         return DefaultClientResources.builder().reconnectDelay(Delay.fullJitter(Duration.ofMillis(100), Duration.ofSeconds(10), 100, TimeUnit.MILLISECONDS))
