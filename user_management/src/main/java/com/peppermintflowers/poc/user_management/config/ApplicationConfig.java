@@ -18,11 +18,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.web.SecurityFilterChain;
-import com.peppermintflowers.poc.user_management.config.JwtAuthenticationFilter;
-import com.peppermintflowers.poc.user_management.config.JwtGenerationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.cors.CorsConfigurationSource;
+
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -85,33 +85,35 @@ public class ApplicationConfig {
     }
 
     @Bean
-    JwtGenerationFilter jwtGenerationFilter(AuthenticationConfiguration config) throws Exception {
-
-        JwtGenerationFilter jwtGenerationFilter = new JwtGenerationFilter(tokenHandler, authenticationManager(config));
-        jwtGenerationFilter.setAuthenticationManager(authenticationManager(config));
-        return jwtGenerationFilter;
-    }
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationConfiguration config) throws Exception {
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http,
+           AuthenticationConfiguration config,
+           AuthenticationProvider authenticationProvider,
+            JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable);
-        http.cors().configurationSource(request -> {
-                    CorsConfiguration configuration = new CorsConfiguration();
-                    configuration.setAllowedOrigins(Collections.singletonList("*"));
-                    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-                    configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
-                    configuration.setAllowCredentials(true);
-                    return configuration;
-                }).and()
-                .authorizeRequests()
-                .requestMatchers(AUTH_WHITELIST).permitAll()
-                .anyRequest()
-                .authenticated()
-                .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-//                .and()
-//                .addFilter(jwtGenerationFilter(config))
-//                .addFilterBefore(jwtAuthenticationFilter(), JwtGenerationFilter.class );
+
+        http.authorizeRequests()
+            .requestMatchers(AUTH_WHITELIST).permitAll()
+            .anyRequest()
+            .authenticated()
+            .and()
+            .sessionManagement()
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .and()
+            .authenticationProvider(authenticationProvider)
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
+    }
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Collections.singletonList("*"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+        configuration.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**",configuration);
+        return source;
     }
 }
