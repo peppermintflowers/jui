@@ -1,8 +1,7 @@
 package com.peppermintflowers.poc.dashboard.controller;
 
-import com.peppermintflowers.poc.dashboard.models.CartObject;
 import com.peppermintflowers.poc.dashboard.models.Product;
-import com.peppermintflowers.poc.dashboard.models.ProductFilters;
+import com.peppermintflowers.poc.dashboard.dto.ProductsFiltersDTO;
 import com.peppermintflowers.poc.dashboard.service.DashboardService;
 
 import com.peppermintflowers.poc.dashboard.service.TokenHandler;
@@ -33,13 +32,12 @@ public class DashboardController {
     }
 
         @GetMapping("/view")
-        public ResponseEntity<Object> viewProducts(@ParameterObject ProductFilters productFilters){
+        public ResponseEntity<Object> viewProducts(@ParameterObject ProductsFiltersDTO productFilters){
             log.info("productFilters is {}",productFilters.toString());
-            List<Product>  products = dashboardService.getAllProducts(productFilters);
+            List<Product>  products = dashboardService.getProducts(productFilters);
             if(products == null){
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
             }
-
             return ResponseEntity.ok(products);
         }
 

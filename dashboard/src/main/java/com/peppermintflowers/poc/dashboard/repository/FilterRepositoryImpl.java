@@ -1,7 +1,7 @@
 package com.peppermintflowers.poc.dashboard.repository;
 
 import com.peppermintflowers.poc.dashboard.models.Product;
-import com.peppermintflowers.poc.dashboard.models.ProductFilters;
+import com.peppermintflowers.poc.dashboard.dto.ProductsFiltersDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -15,7 +15,7 @@ public class FilterRepositoryImpl implements FilterRepository {
     @Autowired
     MongoTemplate mongoTemplate;
     @Override
-    public List<Product> findByProductFilters(ProductFilters productFilters) {
+    public List<Product> findByProductFilters(ProductsFiltersDTO productFilters) {
         List<Criteria> criterias = new ArrayList<Criteria>();
         Query query = new Query();
         if(productFilters.getPrice() != null){

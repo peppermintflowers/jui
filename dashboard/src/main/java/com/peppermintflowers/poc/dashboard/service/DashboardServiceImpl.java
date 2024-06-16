@@ -3,12 +3,12 @@ package com.peppermintflowers.poc.dashboard.service;
 import com.peppermintflowers.poc.dashboard.models.Cart;
 import com.peppermintflowers.poc.dashboard.models.CartObject;
 import com.peppermintflowers.poc.dashboard.models.Product;
-import com.peppermintflowers.poc.dashboard.models.ProductFilters;
+import com.peppermintflowers.poc.dashboard.dto.ProductsFiltersDTO;
 import com.peppermintflowers.poc.dashboard.repository.CartRepository;
 import com.peppermintflowers.poc.dashboard.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,8 +22,13 @@ public class DashboardServiceImpl implements DashboardService{
     private final CartRepository cartRepository;
     //private final UserRepository userRepository;
 
+    @Cacheable(
+            key="#productFilters.toString()",
+            value="dashboardProductCache",
+            cacheManager = "defaultCacheManager"
+    )
     @Override
-    public List<Product> getAllProducts(ProductFilters productFilters) {
+    public List<Product> getProducts(ProductsFiltersDTO productFilters) {
         if(productFilters.isEmpty())
         {log.info("In the correct step");
             return productRepository.findAll();

@@ -1,15 +1,15 @@
-package com.peppermintflowers.poc.dashboard.models;
+package com.peppermintflowers.poc.dashboard.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
+import lombok.ToString;
+
 @Setter
 @Getter
 @AllArgsConstructor
-public class ProductFilters {
+@ToString
+public class ProductsFiltersDTO {
 
     Long id;
 

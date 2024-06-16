@@ -3,11 +3,11 @@ import com.peppermintflowers.poc.dashboard.models.Cart;
 import com.peppermintflowers.poc.dashboard.models.Product;
 
 import java.util.List;
-import java.util.Optional;
-import com.peppermintflowers.poc.dashboard.models.ProductFilters;
+
+import com.peppermintflowers.poc.dashboard.dto.ProductsFiltersDTO;
 
 public interface DashboardService {
-    List<Product> getAllProducts(ProductFilters productFilters);
+    List<Product> getProducts(ProductsFiltersDTO productFilters);
 
     Product getProductByProductId(Long productId);
 

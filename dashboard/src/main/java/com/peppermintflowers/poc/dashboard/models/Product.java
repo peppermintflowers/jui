@@ -7,11 +7,13 @@ import lombok.Setter;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.io.Serializable;
+
 @Document("product_catalogue")
 @NoArgsConstructor
 @Getter
 @Setter
-public class Product {
+public class Product implements Serializable {
     @Field("id")
     Long id;
     @Field("price")
@@ -62,5 +64,4 @@ public class Product {
     String backImageUrl;
     @Field("styleOptions")
     StyleOption[] options;
-
 }

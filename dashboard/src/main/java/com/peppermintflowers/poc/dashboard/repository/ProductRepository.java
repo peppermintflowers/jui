@@ -1,8 +1,6 @@
 package com.peppermintflowers.poc.dashboard.repository;
 
 import com.peppermintflowers.poc.dashboard.models.Product;
-import com.peppermintflowers.poc.dashboard.models.ProductFilters;
-import org.springframework.data.domain.Example;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
