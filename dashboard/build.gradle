@@ -2,6 +2,7 @@ plugins {
     id 'org.springframework.boot' version '3.2.5'
     id 'io.spring.dependency-management' version '1.1.0'
     id 'java'
+    id "org.springdoc.openapi-gradle-plugin" version "1.8.0"
 }
 ext {
     javaVersion = '21'
@@ -18,9 +19,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.data:spring-data-mongodb:4.2.0'
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
     implementation 'org.springdoc:springdoc-openapi-starter-common:2.5.0'
     implementation 'io.swagger:swagger-annotations:1.6.14'
     implementation 'io.jsonwebtoken:jjwt:0.12.5'
+    implementation 'org.apache.commons:commons-pool2:2.12.0'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis:2.7.11'
     compileOnly 'org.projectlombok:lombok:1.18.32'
     annotationProcessor 'org.projectlombok:lombok:1.18.32'
@@ -32,4 +35,14 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+task printEnv {
+    doLast {
+        println "REDIS_HOST: ${System.getenv('REDIS_HOST')}"
+    }
+}
+
+tasks.withType(Test) {
+    systemProperty 'REDIS_HOST', System.getenv('REDIS_HOST')
 }

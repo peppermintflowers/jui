@@ -2,6 +2,7 @@ plugins {
     id 'org.springframework.boot' version '3.2.5'
     id 'io.spring.dependency-management' version '1.1.0'
     id 'java'
+    id "org.springdoc.openapi-gradle-plugin" version "1.8.0"
 }
 
 group 'com.peppermintflowers.poc'
@@ -21,11 +22,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
     implementation 'io.jsonwebtoken:jjwt:0.12.5'
     implementation 'org.springframework.data:spring-data-mongodb:4.2.0'
-
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
+    implementation 'org.springdoc:springdoc-openapi-starter-common:2.5.0'
     implementation 'io.swagger:swagger-annotations:1.6.14'
     implementation 'org.springframework.boot:spring-boot-starter-validation:3.3.0'
     implementation 'org.springframework.boot:spring-boot-starter-webflux:3.3.0'
-    implementation 'io.swagger:swagger-annotations:1.6.14'
     compileOnly 'org.projectlombok:lombok:1.18.32'
     annotationProcessor 'org.projectlombok:lombok:1.18.32'
 
@@ -41,4 +42,8 @@ test {
 
 springBoot {
     mainClass = 'com.peppermintflowers.poc.user_management.UserManagementApplication'
+}
+
+bootRun {
+
 }

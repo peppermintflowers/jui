@@ -11,6 +11,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,7 +21,11 @@ import org.springframework.security.web.SecurityFilterChain;
 import com.peppermintflowers.poc.user_management.config.JwtAuthenticationFilter;
 import com.peppermintflowers.poc.user_management.config.JwtGenerationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.servlet.HandlerExceptionResolver;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
@@ -88,21 +93,25 @@ public class ApplicationConfig {
     }
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationConfiguration config) throws Exception {
-
-        http.csrf()
-                .disable()
+        http.csrf(AbstractHttpConfigurer::disable);
+        http.cors().configurationSource(request -> {
+                    CorsConfiguration configuration = new CorsConfiguration();
+                    configuration.setAllowedOrigins(Collections.singletonList("*"));
+                    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                    configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+                    configuration.setAllowCredentials(true);
+                    return configuration;
+                }).and()
                 .authorizeRequests()
                 .requestMatchers(AUTH_WHITELIST).permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
                 .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .addFilter(jwtGenerationFilter(config))
-                .addFilterBefore(jwtAuthenticationFilter(), JwtGenerationFilter.class );
-
-
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+//                .and()
+//                .addFilter(jwtGenerationFilter(config))
+//                .addFilterBefore(jwtAuthenticationFilter(), JwtGenerationFilter.class );
         return http.build();
     }
 }
