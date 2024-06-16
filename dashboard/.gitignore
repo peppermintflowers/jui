@@ -32,7 +32,7 @@ build/
 ### VS Code ###
 .vscode/
 
-.gradle
+.gradle/
 /build/
 
 # Ignore Gradle GUI config

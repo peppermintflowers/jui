@@ -1,6 +1,8 @@
 # jui - Project
 a chic e-boutique
 
+<img src="assets/jui.jpeg" width="700" height="350">
+
 ## Setting up Environment Variables
 To set up environment variables, run the following command from the root project directory:
 

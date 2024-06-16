@@ -31,3 +31,11 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Gradle specific files
+.gradle/
+build/
+
+# Ignore Gradle Wrapper files
+!gradle/wrapper/gradle-wrapper.jar
+gradle/wrapper/gradle-wrapper.properties
