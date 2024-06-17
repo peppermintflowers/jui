@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.data.redis.LettuceClientConfigurationBuilderCustomizer;
 import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CachingConfigurer;
 import org.springframework.cache.interceptor.CacheErrorHandler;
@@ -98,7 +99,10 @@ public class RedisConfig implements CachingConfigurer {
 
     @Bean
     public RedisCacheManager defaultCacheManager(RedisConnectionFactory redisConnectionFactory){
-        RedisCacheConfiguration config =RedisCacheConfiguration.defaultCacheConfig().disableCachingNullValues().serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
+        RedisCacheConfiguration config =RedisCacheConfiguration.defaultCacheConfig()
+                .disableCachingNullValues()
+                .serializeValuesWith(RedisSerializationContext.SerializationPair
+                    .fromSerializer(new GenericJackson2JsonRedisSerializer()));
 
         RedisCacheManager cacheManager = RedisCacheManager.builder(redisConnectionFactory)
                 .cacheWriter(RedisCacheWriter.nonLockingRedisCacheWriter(redisConnectionFactory))
@@ -116,26 +120,22 @@ public class RedisConfig implements CachingConfigurer {
         return new CacheErrorHandler() {
             @Override
             public void handleCacheGetError(RuntimeException exception, Cache cache, Object key) {
-                // Handle cache get error
-                System.err.println("Cache Get Error: " + exception.getMessage());
+                log.warn("Cache Get Error for key {}: {}", key, exception.getMessage());
             }
 
             @Override
             public void handleCachePutError(RuntimeException exception, Cache cache, Object key, Object value) {
-                // Handle cache put error
-                System.err.println("Cache Put Error: " + exception.getMessage());
+                log.warn("Cache Put Error for key {}: {}", key, exception.getMessage());
             }
 
             @Override
             public void handleCacheEvictError(RuntimeException exception, Cache cache, Object key) {
-                // Handle cache evict error
-                System.err.println("Cache Evict Error: " + exception.getMessage());
+                log.warn("Cache Evict Error for key {}: {}", key, exception.getMessage());
             }
 
             @Override
             public void handleCacheClearError(RuntimeException exception, Cache cache) {
-                // Handle cache clear error
-                System.err.println("Cache Clear Error: " + exception.getMessage());
+                log.warn("Cache Clear Error: {}", exception.getMessage());
             }
         };
 
